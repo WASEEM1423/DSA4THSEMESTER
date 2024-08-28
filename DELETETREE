@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a tree node
+typedef struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+// Function to create a new tree node
+Node* createNode(int data) {
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new node into the tree
+Node* insertNode(Node* root, int data) {
+    // If the tree is empty, create a new node
+    if (root == NULL) {
+        root = createNode(data);
+    } else {
+        // Recursively insert the new node into the left or right subtree
+        if (data < root->data) {
+            root->left = insertNode(root->left, data);
+        } else {
+            root->right = insertNode(root->right, data);
+        }
+    }
+    return root;
+}
+
+// Function to find the minimum value node in the tree
+Node* findMinNode(Node* root) {
+    while (root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+// Function to delete a node from the tree
+Node* deleteNode(Node* root, int data) {
+    // If the tree is empty, return NULL
+    if (root == NULL) {
+        return root;
+    }
+
+    // If the data to be deleted is less than the root's data, delete from the left subtree
+    if (data < root->data) {
+        root->left = deleteNode(root->left, data);
+    }
+    // If the data to be deleted is greater than the root's data, delete from the right subtree
+    else if (data > root->data) {
+        root->right = deleteNode(root->right, data);
+    }
+    // If the data to be deleted is equal to the root's data, delete the root node
+    else {
+        // Case 1: Node has no children
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+            return NULL;
+        }
+        // Case 2: Node has one child
+        else if (root->left == NULL) {
+            Node* temp = root;
+            root = root->right;
+            free(temp);
+            return root;
+        }
+        else if (root->right == NULL) {
+            Node* temp = root;
+            root = root->left;
+            free(temp);
+            return root;
+        }
+        // Case 3: Node has two children
+        else {
+            Node* temp = findMinNode(root->right);
+            root->data = temp->data;
+            root->right = deleteNode(root->right, temp->data);
+        }
+    }
+    return root;
+}
+
+// Function to perform inorder traversal of the tree
+void inorderTraversal(Node* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+
+    // Insert nodes into the tree
+    root = insertNode(root, 8);
+    root = insertNode(root, 3);
+    root = insertNode(root, 10);
+    root = insertNode(root, 1);
+    root = insertNode(root, 6);
+    root = insertNode(root, 14);
+    root = insertNode(root, 4);
+    root = insertNode(root, 7);
+    root = insertNode(root, 13);
+
+    // Perform inorder traversal before deletion
+    printf("Inorder Traversal before deletion: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    // Delete a node from the tree
+    root = deleteNode(root, 10);
+
+    // Perform inorder traversal after deletion
+    printf("Inorder Traversal after deletion: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    return 0;
+}
