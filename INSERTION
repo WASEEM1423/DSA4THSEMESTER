@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definition of a node in a doubly linked list
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+
+void insertAtBeginning(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->prev = NULL;
+    new_node->next = (*head_ref);
+
+    if ((*head_ref) != NULL)
+        (*head_ref)->prev = new_node;
+
+    (*head_ref) = new_node;
+}
+
+
+void insertAtEnd(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    if (*head_ref == NULL) {
+        new_node->prev = NULL;
+        *head_ref = new_node;
+        return;
+    }
+
+    while (last->next != NULL)
+        last = last->next;
+
+    last->next = new_node;
+    new_node->prev = last;
+}
+
+
+void deleteNode(struct Node** head_ref, struct Node* del) {
+    if (*head_ref == NULL || del == NULL)
+        return;
+
+    if (*head_ref == del)
+        *head_ref = del->next;
+
+    if (del->next != NULL)
+        del->next->prev = del->prev;
+
+    if (del->prev != NULL)
+        del->prev->next = del->next;
+
+    free(del);
+}
+
+
+void deleteNodeAtPosition(struct Node** head_ref, int position) {
+    if (*head_ref == NULL || position < 0)
+        return;
+
+    struct Node* current = *head_ref;
+
+    for (int i = 0; current != NULL && i < position; i++)
+        current = current->next;
+
+    if (current == NULL)
+        return;
+
+    deleteNode(head_ref, current);
+}
+
+
+void printList(struct Node* node) {
+    struct Node* last;
+    printf("Traversal in forward direction:\n");
+    while (node != NULL) {
+        printf("%d ", node->data);
+        last = node;
+        node = node->next;
+    }
+    printf("\n");
+}
+
+
+int main() {
+    struct Node* head = NULL;
+
+    insertAtEnd(&head, 10);
+    insertAtEnd(&head, 20);
+    insertAtBeginning(&head, 5);
+    insertAtEnd(&head, 25);
+    insertAtBeginning(&head, 1);
+
+    printf("Doubly linked list after insertion:\n");
+    printList(head);
+
+    deleteNode(&head, head->next); // Delete node with data 5
+    deleteNodeAtPosition(&head, 2); // Delete node at position 2
+
+    printf("\nDoubly");
+}
