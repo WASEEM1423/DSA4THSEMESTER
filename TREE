@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a tree node
+typedef struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+// Function to create a new tree node
+Node* createNode(int data) {
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new node into the tree
+Node* insertNode(Node* root, int data) {
+    // If the tree is empty, create a new node
+    if (root == NULL) {
+        root = createNode(data);
+    } else {
+        // Recursively insert the new node into the left or right subtree
+        if (data < root->data) {
+            root->left = insertNode(root->left, data);
+        } else {
+            root->right = insertNode(root->right, data);
+        }
+    }
+    return root;
+}
+
+// Function to perform inorder traversal of the tree
+void inorderTraversal(Node* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+// Function to perform preorder traversal of the tree
+void preorderTraversal(Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorderTraversal(root->left);
+        preorderTraversal(root->right);
+    }
+}
+
+// Function to perform postorder traversal of the tree
+void postorderTraversal(Node* root) {
+    if (root != NULL) {
+        postorderTraversal(root->left);
+        postorderTraversal(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+
+    // Insert nodes into the tree
+    root = insertNode(root, 8);
+    root = insertNode(root, 3);
+    root = insertNode(root, 10);
+    root = insertNode(root, 1);
+    root = insertNode(root, 6);
+    root = insertNode(root, 14);
+    root = insertNode(root, 4);
+    root = insertNode(root, 7);
+    root = insertNode(root, 13);
+
+    // Perform traversals
+    printf("Inorder Traversal: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    printf("Preorder Traversal: ");
+    preorderTraversal(root);
+    printf("\n");
+
+    printf("Postorder Traversal: ");
+    postorderTraversal(root);
+    printf("\n");
+
+    return 0;
+}
