@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_VERTICES 100
+
+typedef struct Graph {
+    int numVertices;
+    bool adjMatrix[MAX_VERTICES][MAX_VERTICES];
+} Graph;
+
+void dfs(Graph* graph, int startVertex, bool visited[]) {
+    printf("%d ", startVertex);
+    visited[startVertex] = true;
+
+    for (int i = 0; i < graph->numVertices; i++) {
+        if (graph->adjMatrix[startVertex][i] && !visited[i]) {
+            dfs(graph, i, visited);
+        }
+    }
+}
+
+void performDFS(Graph* graph, int startVertex) {
+    bool visited[MAX_VERTICES];
+    for (int i = 0; i < graph->numVertices; i++) {
+        visited[i] = false;
+    }
+
+    dfs(graph, startVertex, visited);
+    printf("\n");
+}
+
+int main() {
+    Graph graph;
+    graph.numVertices = 5;
+
+    // Initialize adjacency matrix
+    graph.adjMatrix[0][1] = graph.adjMatrix[0][2] = graph.adjMatrix[1][2] =
+        graph.adjMatrix[1][3] = graph.adjMatrix[2][4] = true;
+
+    performDFS(&graph, 0);
+
+    return 0;
+}
